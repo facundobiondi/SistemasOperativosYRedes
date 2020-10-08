@@ -1,2 +1,2 @@
-# Sistemas Operativos Y Redes
+# Sistemas Operativos y Redes
 
