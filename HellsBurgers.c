@@ -6,6 +6,7 @@
 #include <semaphore.h>  // para usar semaforos
 #include <unistd.h>
 
+FILE* nuevo;
 
 #define LIMITE 50
 
@@ -17,6 +18,7 @@ struct semaforos {
 
 //creo los pasos con los ingredientes
 struct paso {
+   char pasoReceta [LIMITE];
    char accion [LIMITE];
    char ingredientes[4][LIMITE];
    
@@ -41,7 +43,7 @@ void* imprimirAccion(void *data, char *accionIn) {
 		if(strcmp(mydata->pasos_param[i].accion, accionIn) == 0){
 		printf("\tEquipo %d - accion %s \n " , mydata->equipo_param, mydata->pasos_param[i].accion);
 		//calculo la longitud del array de ingredientes
-		int sizeArrayIngredientes = (int)( sizeof(mydata->pasos_param[i].ingredientes) / sizeof(mydata->pasos_param[i].ingredientes[0]) );
+		int sizeArrayIngredientes = (int)( sizeof(mydata->pasos_param[0].ingredientes) / sizeof(mydata->pasos_param[i].ingredientes[0]) );
 		//indice para recorrer array de ingredientes
 		int h;
 		printf("\tEquipo %d -----------ingredientes : ----------\n",mydata->equipo_param); 
@@ -57,6 +59,87 @@ void* imprimirAccion(void *data, char *accionIn) {
 
 //funcion para tomar de ejemplo
 void* cortar(void *data) {
+	
+	//creo el nombre de la accion de la funcion 
+	char *accion = "cortar";
+	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
+	struct parametro *mydata = data;
+	//llamo a la funcion imprimir le paso el struct y la accion de la funcion
+	imprimirAccion(mydata,accion);
+	//uso sleep para simular que que pasa tiempo
+	usleep( 20000 );
+	//doy la señal a la siguiente accion (cortar me habilita mezclar)
+    sem_post(&mydata->semaforos_param.sem_mezclar);
+	
+    pthread_exit(NULL);
+}
+
+//funcion para tomar de ejemplo
+void* mezclar(void *data) {
+	//creo el nombre de la accion de la funcion 
+	char *accion = "cortar";
+	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
+	struct parametro *mydata = data;
+	//llamo a la funcion imprimir le paso el struct y la accion de la funcion
+	imprimirAccion(mydata,accion);
+	//uso sleep para simular que que pasa tiempo
+	usleep( 20000 );
+	//doy la señal a la siguiente accion (cortar me habilita mezclar)
+    sem_post(&mydata->semaforos_param.sem_mezclar);
+	
+    pthread_exit(NULL);
+}
+
+//funcion para tomar de ejemplo
+void* hornearPan(void *data) {
+	//creo el nombre de la accion de la funcion 
+	char *accion = "cortar";
+	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
+	struct parametro *mydata = data;
+	//llamo a la funcion imprimir le paso el struct y la accion de la funcion
+	imprimirAccion(mydata,accion);
+	//uso sleep para simular que que pasa tiempo
+	usleep( 20000 );
+	//doy la señal a la siguiente accion (cortar me habilita mezclar)
+    sem_post(&mydata->semaforos_param.sem_mezclar);
+	
+    pthread_exit(NULL);
+}
+
+//funcion para tomar de ejemplo
+void* armarMedallonos(void *data) {
+	//creo el nombre de la accion de la funcion 
+	char *accion = "cortar";
+	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
+	struct parametro *mydata = data;
+	//llamo a la funcion imprimir le paso el struct y la accion de la funcion
+	imprimirAccion(mydata,accion);
+	//uso sleep para simular que que pasa tiempo
+	usleep( 20000 );
+	//doy la señal a la siguiente accion (cortar me habilita mezclar)
+    sem_post(&mydata->semaforos_param.sem_mezclar);
+	
+    pthread_exit(NULL);
+}
+
+//funcion para tomar de ejemplo
+void* CocinarMedallones(void *data) {
+	//creo el nombre de la accion de la funcion 
+	char *accion = "cortar";
+	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
+	struct parametro *mydata = data;
+	//llamo a la funcion imprimir le paso el struct y la accion de la funcion
+	imprimirAccion(mydata,accion);
+	//uso sleep para simular que que pasa tiempo
+	usleep( 20000 );
+	//doy la señal a la siguiente accion (cortar me habilita mezclar)
+    sem_post(&mydata->semaforos_param.sem_mezclar);
+	
+    pthread_exit(NULL);
+}
+
+//funcion para tomar de ejemplo
+void* armarHamburgesa(void *data) {
 	//creo el nombre de la accion de la funcion 
 	char *accion = "cortar";
 	//creo el puntero para pasarle la referencia de memoria (data) del struct pasado por parametro (la cual es un puntero). 
@@ -98,12 +181,21 @@ void* ejecutarReceta(void *i) {
 	pthread_data->semaforos_param.sem_mezclar = sem_mezclar;
 	//setear demas semaforos al struct aqui
 	
+	
 
 	//seteo las acciones y los ingredientes (Faltan acciones e ingredientes) ¿Se ve hardcodeado no? ¿Les parece bien?
+
+	int c;
+	FILE * archivo = fopen("Receta.txt", "rb");
+		while ((c=fgetc(archivo)) != EOF) {
+		paso.pasoReceta = c;
+	
+	}
+
      	strcpy(pthread_data->pasos_param[0].accion, "cortar");
 	strcpy(pthread_data->pasos_param[0].ingredientes[0], "ajo");
         strcpy(pthread_data->pasos_param[0].ingredientes[1], "perejil");
- 	strcpy(pthread_data->pasos_param[0].ingredientes[2], "cebolla");
+ 	strcpy(pthread_data->pasos_param[0].ingredientes[2], "ceboasdasdlla");
 
 	strcpy(pthread_data->pasos_param[1].accion, "mezclar");
 	strcpy(pthread_data->pasos_param[1].ingredientes[0], "ajo");
@@ -147,9 +239,24 @@ void* ejecutarReceta(void *i) {
 	 pthread_exit(NULL);
 }
 
+void Lectura() {
+	int c;
+	char palabra;
+	FILE * archivo = fopen("Receta.txt", "rb");
+	while ((c=fgetc(archivo)) != EOF) {
+	palabra = putchar(c);
+
+	}
+
+
+}
+
 
 int main ()
 {
+	
+	//Lectura();
+	
 	//creo los nombres de los equipos 
 	int rc;
 	int *equipoNombre1 =malloc(sizeof(*equipoNombre1));
@@ -189,7 +296,6 @@ int main ()
 	pthread_join (equipo1,NULL);
 	pthread_join (equipo2,NULL);
 	pthread_join (equipo3,NULL);
-
 
     pthread_exit(NULL);
 }
